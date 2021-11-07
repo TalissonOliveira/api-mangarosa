@@ -102,6 +102,33 @@ class EmployeeController {
             })
         }
     }
+
+    async deleteEmployeeByCpf(req, res) {
+        const { cpf } = req.params
+
+        try {
+            const employees = await db.query(`SELECT * FROM employee`)
+            const employeeExists = employees.some(employee => employee.cpf === cpf)
+
+            if(!employeeExists) {
+                return res.status(400).send({
+                    message: "Employee does not exist!"
+                })
+            }
+
+            await db.query(`DELETE FROM employee WHERE cpf = '${cpf}'`)
+
+            return res.send({
+                message: `Employee with CPF '${cpf}' deleted successfully!`
+            })
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).send({
+                message: "Error deleting employee."
+            })
+        }
+    }
 }
 
 module.exports = EmployeeController
