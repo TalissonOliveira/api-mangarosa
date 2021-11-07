@@ -38,6 +38,20 @@ class EmployeeController {
             })
         } 
     }
+
+    async findAllEmployee(req, res) {
+        try {
+            const employees = await db.query("SELECT * FROM employee ORDER BY name ASC")
+
+            return res.send(employees)
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).send({
+                message: "Error fetching all employees."
+            })
+        }
+    }
 }
 
 module.exports = EmployeeController
