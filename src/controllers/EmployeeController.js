@@ -52,6 +52,26 @@ class EmployeeController {
             })
         }
     }
+
+    async findEmployeeByCpf(req, res) {
+        const { cpf } = req.params
+
+        try {
+            const employee = await db.query(`SELECT * FROM employee WHERE cpf = '${cpf}'`)
+
+            if (employee.length === 0) {
+                return res.status(400).send({message: "Employee does not exist!"})
+            }
+
+            return res.send(employee)
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).send({
+                message: "Error fetching employee data."
+            })
+        }
+    }
 }
 
 module.exports = EmployeeController
