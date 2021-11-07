@@ -72,6 +72,36 @@ class EmployeeController {
             })
         }
     }
+
+    async updateEmployeeByCpf(req, res) {
+        const { cpf } = req.params
+        const { valid } = req.body
+
+        try {
+            const employee = await db.query(`SELECT * FROM employee WHERE cpf = '${cpf}'`)
+
+            if (employee.length === 0) {
+                return res.status(400).send({
+                    message: "Employee does not exist!"
+                })
+            }
+
+            await db.query(`UPDATE employee SET valid = '${valid}' WHERE cpf = '${cpf}'`)
+
+            return res.send({
+                message: "Employee updated successfully!",
+                body: {
+                    employee: {cpf, valid}
+                }
+            })
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).send({
+                message: "Error updating employee data."
+            })
+        }
+    }
 }
 
 module.exports = EmployeeController

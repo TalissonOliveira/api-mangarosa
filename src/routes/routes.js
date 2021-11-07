@@ -6,5 +6,7 @@ const routes = express.Router()
 routes.get('/employee', new EmployeeController().findAllEmployee)
 routes.get('/employee/:cpf', new EmployeeController().findEmployeeByCpf)
 routes.post('/employee', new EmployeeController().createEmployee)
+routes.patch('/employee/:cpf', new EmployeeController().updateEmployeeByCpf)
+
 
 module.exports = routes
