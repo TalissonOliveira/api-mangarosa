@@ -1,0 +1,9 @@
+CREATE TABLE employee (
+	id SERIAL NOT NULL PRIMARY KEY,
+	name VARCHAR(100) NOT NULL,
+	email VARCHAR(100) NOT NULL,
+	cpf VARCHAR(14) NOT NULL,
+	phone_number VARCHAR(15),
+	skills VARCHAR[] NOT NULL
+	valid boolean NOT NULL DEFAULT False
+)
