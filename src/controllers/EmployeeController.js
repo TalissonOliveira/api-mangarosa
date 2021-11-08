@@ -1,5 +1,8 @@
 const db = require('../config/database')
 
+const formatSkills = require('../scripts/formatSkills')
+const { formatCPF, formatPhone_number } = require('../scripts/masks')
+
 class EmployeeController {
     async createEmployee(req, res) {
         const { name, email, cpf, phone_number, skills } = req.body
@@ -13,16 +16,34 @@ class EmployeeController {
                     message: "Employee already registered!"
                 })
             }
+
+            const formattedCpf = formatCPF(cpf)
+
+            if (formattedCpf.length !== 14) {
+                return res.status(400).send({
+                    message: "CPF inválido."
+                })
+            }
+
+            const formattedPhone_number = formatPhone_number(phone_number)
+
+            if (formattedPhone_number.length !== 15) {
+                return res.status(400).send({
+                    message: "Número de telefone inválido."
+                })
+            }
     
-            if (!name || !email || !cpf || !skills) {
-                return res.send({
+            if (!name || !email || !cpf || cpf.length > 14 || !skills ) {
+                return res.status(400).send({
                     message: "Invalid or missing data."
                 })
             }
 
+            const formattedSkills = formatSkills(skills)
+
             await db.query(`
                 INSERT INTO employee(name, email, cpf, phone_number, skills)
-                VALUES ('${name}', '${email}', '${cpf}', '${phone_number}', '${skills}'
+                VALUES ('${name}', '${email}', '${cpf}', '${phone_number}', '${formattedSkills}'
             );`)
 
             return res.status(201).send({
@@ -60,7 +81,9 @@ class EmployeeController {
             const employee = await db.query(`SELECT * FROM employee WHERE cpf = '${cpf}'`)
 
             if (employee.length === 0) {
-                return res.status(400).send({message: "Employee does not exist!"})
+                return res.status(400).send({
+                    message: "Employee does not exist!"
+                })
             }
 
             return res.send(employee)
