@@ -13,7 +13,8 @@ class EmployeeController {
     
             if (employeeExists) {
                 return res.status(400).send({
-                    message: "Funcionário já cadastrado!"
+                    message: "Funcionário já cadastrado!",
+                    type: "Error"
                 })
             }
 
@@ -21,21 +22,24 @@ class EmployeeController {
 
             if (formattedCpf.length !== 14) {
                 return res.status(400).send({
-                    message: "CPF inválido."
+                    message: "CPF inválido.",
+                    type: "Error"
                 })
             }
 
             const formattedPhone_number = formatPhone_number(phone_number)
 
-            if (formattedPhone_number.length !== 15) {
+            if (formattedPhone_number && formattedPhone_number.length !== 15) {
                 return res.status(400).send({
-                    message: "Número de telefone inválido."
+                    message: "Número de telefone inválido.",
+                    type: "Error"
                 })
             }
     
             if (!name || !email || !cpf || cpf.length > 14 || !skills ) {
                 return res.status(400).send({
-                    message: "Dados faltando ou inválidos."
+                    message: "Dados faltando ou inválidos.",
+                    type: "Error"
                 })
             }
 
@@ -55,7 +59,8 @@ class EmployeeController {
 
         } catch (error) {
             return res.status(400).send({
-                message: "Erro ao adicionar funcionário."
+                message: "Erro ao adicionar funcionário.",
+                type: "Error"
             })
         } 
     }
@@ -69,7 +74,8 @@ class EmployeeController {
         } catch (error) {
             console.log(error)
             res.status(500).send({
-                message: "Erro ao buscar todos os funcionários."
+                message: "Erro ao buscar todos os funcionários.",
+                type: "Error"
             })
         }
     }
@@ -82,7 +88,8 @@ class EmployeeController {
 
             if (employee.length === 0) {
                 return res.status(400).send({
-                    message: "Funcionário não existe!"
+                    message: "Funcionário não existe!",
+                    type: "Error"
                 })
             }
 
@@ -91,7 +98,8 @@ class EmployeeController {
         } catch (error) {
             console.log(error)
             res.status(500).send({
-                message: "Erro ao buscar dados do funcionário."
+                message: "Erro ao buscar dados do funcionário.",
+                type: "Error"
             })
         }
     }
@@ -105,7 +113,8 @@ class EmployeeController {
 
             if (employee.length === 0) {
                 return res.status(400).send({
-                    message: "Funcionário não existe!"
+                    message: "Funcionário não existe!",
+                    type: "Error"
                 })
             }
 
@@ -121,7 +130,8 @@ class EmployeeController {
         } catch (error) {
             console.log(error)
             res.status(500).send({
-                message: "Erro ao atualizar os dados do funcionário."
+                message: "Erro ao atualizar os dados do funcionário.",
+                type: "Error"
             })
         }
     }
@@ -135,7 +145,8 @@ class EmployeeController {
 
             if(!employeeExists) {
                 return res.status(400).send({
-                    message: "Funcionário não existe!"
+                    message: "Funcionário não existe!",
+                    type: "Error"
                 })
             }
 
@@ -148,7 +159,8 @@ class EmployeeController {
         } catch (error) {
             console.log(error)
             res.status(500).send({
-                message: "Erro ao deletar funcionário."
+                message: "Erro ao deletar funcionário.",
+                type: "Error"
             })
         }
     }
