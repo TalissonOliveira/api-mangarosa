@@ -6,10 +6,13 @@ const { formatCPF, formatPhone_number } = require('../scripts/masks')
 class EmployeeController {
     async createEmployee(req, res) {
         const { name, email, cpf, phone_number, skills } = req.body
+        const formattedCpf = formatCPF(cpf)
+        const formattedPhone_number = formatPhone_number(phone_number)
+        const formattedSkills = formatSkills(skills)
 
         try {
             const employees = await db.query(`SELECT * FROM employee`)
-            const employeeExists = employees.some(employee => employee.cpf === cpf)
+            const employeeExists = employees.some(employee => employee.cpf === formattedCpf)
     
             if (employeeExists) {
                 return res.status(400).send({
@@ -18,8 +21,7 @@ class EmployeeController {
                 })
             }
 
-            const formattedCpf = formatCPF(cpf)
-
+            // Verificar se o CPF é válido
             if (formattedCpf.length !== 14) {
                 return res.status(400).send({
                     message: "CPF inválido.",
@@ -27,27 +29,25 @@ class EmployeeController {
                 })
             }
 
-            const formattedPhone_number = formatPhone_number(phone_number)
-
+            // Verificar se o telefone é válido
             if (formattedPhone_number && formattedPhone_number.length !== 15) {
                 return res.status(400).send({
                     message: "Número de telefone inválido.",
                     type: "Error"
                 })
             }
-    
-            if (!name || !email || !cpf || cpf.length > 14 || !skills ) {
+            
+            // Verificar se falta algum dado é válido
+            if (!name || !email || !cpf || !skills ) {
                 return res.status(400).send({
                     message: "Dados faltando ou inválidos.",
                     type: "Error"
                 })
             }
 
-            const formattedSkills = formatSkills(skills)
-
             await db.query(`
                 INSERT INTO employee(name, email, cpf, phone_number, skills)
-                VALUES ('${name}', '${email}', '${cpf}', '${phone_number}', '${formattedSkills}'
+                VALUES ('${name}', '${email}', '${formattedCpf}', '${formattedPhone_number}', '${formattedSkills}'
             );`)
 
             return res.status(201).send({
@@ -72,7 +72,6 @@ class EmployeeController {
             return res.send(employees)
 
         } catch (error) {
-            console.log(error)
             res.status(500).send({
                 message: "Erro ao buscar todos os funcionários.",
                 type: "Error"
@@ -82,10 +81,12 @@ class EmployeeController {
 
     async findEmployeeByCpf(req, res) {
         const { cpf } = req.params
+        const formattedCpf = formatCPF(cpf)
 
         try {
-            const employee = await db.query(`SELECT * FROM employee WHERE cpf = '${cpf}'`)
+            const employee = await db.query(`SELECT * FROM employee WHERE cpf = '${formattedCpf}'`)
 
+            // Verificar se o funcionário existe
             if (employee.length === 0) {
                 return res.status(400).send({
                     message: "Funcionário não existe!",
@@ -96,7 +97,6 @@ class EmployeeController {
             return res.send(employee)
 
         } catch (error) {
-            console.log(error)
             res.status(500).send({
                 message: "Erro ao buscar dados do funcionário.",
                 type: "Error"
@@ -107,10 +107,12 @@ class EmployeeController {
     async updateEmployeeByCpf(req, res) {
         const { cpf } = req.params
         const { valid } = req.body
+        const formattedCpf = formatCPF(cpf)
 
         try {
-            const employee = await db.query(`SELECT * FROM employee WHERE cpf = '${cpf}'`)
+            const employee = await db.query(`SELECT * FROM employee WHERE cpf = '${formattedCpf}'`)
 
+            // Verificar se o funcionário existe
             if (employee.length === 0) {
                 return res.status(400).send({
                     message: "Funcionário não existe!",
@@ -118,17 +120,16 @@ class EmployeeController {
                 })
             }
 
-            await db.query(`UPDATE employee SET valid = '${valid}' WHERE cpf = '${cpf}'`)
+            await db.query(`UPDATE employee SET valid = '${valid}' WHERE cpf = '${formattedCpf}'`)
 
             return res.send({
                 message: "Funcionário atualizado com sucesso!",
                 body: {
-                    employee: {cpf, valid}
+                    employee: {cpf: formattedCpf, valid}
                 }
             })
 
         } catch (error) {
-            console.log(error)
             res.status(500).send({
                 message: "Erro ao atualizar os dados do funcionário.",
                 type: "Error"
@@ -138,10 +139,11 @@ class EmployeeController {
 
     async deleteEmployeeByCpf(req, res) {
         const { cpf } = req.params
+        const formattedCpf = formatCPF(cpf)
 
         try {
             const employees = await db.query(`SELECT * FROM employee`)
-            const employeeExists = employees.some(employee => employee.cpf === cpf)
+            const employeeExists = employees.some(employee => employee.cpf === formattedCpf)
 
             if(!employeeExists) {
                 return res.status(400).send({
@@ -150,14 +152,13 @@ class EmployeeController {
                 })
             }
 
-            await db.query(`DELETE FROM employee WHERE cpf = '${cpf}'`)
+            await db.query(`DELETE FROM employee WHERE cpf = '${formattedCpf}'`)
 
             return res.send({
-                message: `Funcionário com CPF '${cpf}' deletado com sucesso!`
+                message: `Funcionário com CPF '${formattedCpf}' deletado com sucesso!`
             })
 
         } catch (error) {
-            console.log(error)
             res.status(500).send({
                 message: "Erro ao deletar funcionário.",
                 type: "Error"
