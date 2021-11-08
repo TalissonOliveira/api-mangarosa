@@ -13,7 +13,7 @@ class EmployeeController {
     
             if (employeeExists) {
                 return res.status(400).send({
-                    message: "Employee already registered!"
+                    message: "Funcionário já cadastrado!"
                 })
             }
 
@@ -35,7 +35,7 @@ class EmployeeController {
     
             if (!name || !email || !cpf || cpf.length > 14 || !skills ) {
                 return res.status(400).send({
-                    message: "Invalid or missing data."
+                    message: "Dados faltando ou inválidos."
                 })
             }
 
@@ -47,15 +47,15 @@ class EmployeeController {
             );`)
 
             return res.status(201).send({
-                message: "Employee added successfully!",
+                message: "Funcionário registrado com sucesso!",
                 body: {
                     employee: { name, email, cpf, phone_number, skills }
                 }
             })
 
         } catch (error) {
-            return res.send({
-                message: "Error adding employee."
+            return res.status(400).send({
+                message: "Erro ao adicionar funcionário."
             })
         } 
     }
@@ -69,7 +69,7 @@ class EmployeeController {
         } catch (error) {
             console.log(error)
             res.status(500).send({
-                message: "Error fetching all employees."
+                message: "Erro ao buscar todos os funcionários."
             })
         }
     }
@@ -82,7 +82,7 @@ class EmployeeController {
 
             if (employee.length === 0) {
                 return res.status(400).send({
-                    message: "Employee does not exist!"
+                    message: "Funcionário não existe!"
                 })
             }
 
@@ -91,7 +91,7 @@ class EmployeeController {
         } catch (error) {
             console.log(error)
             res.status(500).send({
-                message: "Error fetching employee data."
+                message: "Erro ao buscar dados do funcionário."
             })
         }
     }
@@ -105,14 +105,14 @@ class EmployeeController {
 
             if (employee.length === 0) {
                 return res.status(400).send({
-                    message: "Employee does not exist!"
+                    message: "Funcionário não existe!"
                 })
             }
 
             await db.query(`UPDATE employee SET valid = '${valid}' WHERE cpf = '${cpf}'`)
 
             return res.send({
-                message: "Employee updated successfully!",
+                message: "Funcionário atualizado com sucesso!",
                 body: {
                     employee: {cpf, valid}
                 }
@@ -121,7 +121,7 @@ class EmployeeController {
         } catch (error) {
             console.log(error)
             res.status(500).send({
-                message: "Error updating employee data."
+                message: "Erro ao atualizar os dados do funcionário."
             })
         }
     }
@@ -135,20 +135,20 @@ class EmployeeController {
 
             if(!employeeExists) {
                 return res.status(400).send({
-                    message: "Employee does not exist!"
+                    message: "Funcionário não existe!"
                 })
             }
 
             await db.query(`DELETE FROM employee WHERE cpf = '${cpf}'`)
 
             return res.send({
-                message: `Employee with CPF '${cpf}' deleted successfully!`
+                message: `Funcionário com CPF '${cpf}' deletado com sucesso!`
             })
 
         } catch (error) {
             console.log(error)
             res.status(500).send({
-                message: "Error deleting employee."
+                message: "Erro ao deletar funcionário."
             })
         }
     }
